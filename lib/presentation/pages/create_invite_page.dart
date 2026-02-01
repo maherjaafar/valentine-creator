@@ -436,15 +436,6 @@ class _CreateInvitePageState extends State<CreateInvitePage> {
                           ],
                           const SizedBox(height: 8),
                           Text(_selectedImage.title, style: Theme.of(context).textTheme.bodyLarge),
-                          const SizedBox(height: 32),
-                          Text(
-                            '📸 Take a screenshot and share it with your next valentine!',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF7C2B5F),
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
                         ],
                       ),
                     ),
