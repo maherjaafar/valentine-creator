@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Allow: /invite/
+
+Sitemap: https://valentine-86f68.web.app/sitemap.xml
