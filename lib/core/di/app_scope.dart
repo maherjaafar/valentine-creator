@@ -5,17 +5,12 @@ import '../../domain/usecases/create_invite.dart';
 import '../../domain/usecases/get_invite_by_id.dart';
 
 class AppScope extends InheritedWidget {
-  AppScope({
-    super.key,
-    required InviteRepository repository,
-    required this.isFirebaseConfigured,
-    required super.child,
-  }) : createInvite = CreateInviteUseCase(repository),
-       getInviteById = GetInviteByIdUseCase(repository);
+  AppScope({super.key, required InviteRepository repository, required super.child})
+    : createInvite = CreateInviteUseCase(repository),
+      getInviteById = GetInviteByIdUseCase(repository);
 
   final CreateInviteUseCase createInvite;
   final GetInviteByIdUseCase getInviteById;
-  final bool isFirebaseConfigured;
 
   static AppScope of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppScope>();
@@ -25,8 +20,6 @@ class AppScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(AppScope oldWidget) {
-    return isFirebaseConfigured != oldWidget.isFirebaseConfigured ||
-        createInvite != oldWidget.createInvite ||
-        getInviteById != oldWidget.getInviteById;
+    return createInvite != oldWidget.createInvite || getInviteById != oldWidget.getInviteById;
   }
 }

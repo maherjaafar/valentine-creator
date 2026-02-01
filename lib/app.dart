@@ -16,7 +16,6 @@ class ValentineApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppScope(
       repository: bootstrap.repository,
-      isFirebaseConfigured: bootstrap.isConfigured,
       child: MaterialApp(
         title: 'Valentine Invite',
         theme: AppTheme.light(),

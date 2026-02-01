@@ -26,6 +26,7 @@ class _InvitePageState extends State<InvitePage> {
   bool _isLoading = true;
   String? _errorMessage;
   bool _accepted = false;
+  int _yesPressCount = 0;
   bool _hasLoadedInvite = false;
   late ConfettiController _confettiController;
   late AudioPlayer _audioPlayer;
@@ -67,9 +68,42 @@ class _InvitePageState extends State<InvitePage> {
   }
 
   void _accept() {
-    setState(() => _accepted = true);
+    setState(() {
+      _accepted = true;
+      _yesPressCount++;
+    });
     _playYesSound();
     _confettiController.play(); // Trigger confetti!
+  }
+
+  String _getExcitementLevel() {
+    final levels = [
+      'YES!',
+      'REALLY YES! 💖',
+      'SUPER YES!! 🔥',
+      'ULTIMATE YES!!! 🚀',
+      'FOREVER YES!!!! ♾️',
+      'YES YES YES!!!!! ❤️‍🔥',
+      'ABSOLUTELY!!!!! 🌹',
+      '1000% YES!!!!! 💎',
+      'BEYOND YES!!!!! ✨',
+      'INFINITE YES!!!!! 🌌',
+      'UNSTOPPABLE YES!!!! ☄️',
+      'GALACTIC YES!!!!! 🌠',
+      'COSMIC YES!!!!!! 🎆',
+      'ETERNAL YES!!!!!!! 💍',
+      'MAXIMUM EXCITEMENT!!!! 🎢',
+      'HEART EXPLOSION!!!!! 🌋',
+      'LOVE OVERLOAD!!!!!! 🌊',
+      'TRUE LOVE YES!!!!!!! 💘',
+      'DESTINY YES!!!!!!!! 🏹',
+      'SOULMATE YES!!!!!!!!! 🕯️',
+    ];
+
+    if (_yesPressCount <= 0) return 'YES';
+    final index = (_yesPressCount - 1).clamp(0, levels.length - 1);
+    final text = levels[index];
+    return '$text ($_yesPressCount)';
   }
 
   Future<void> _playYesSound() async {
@@ -160,7 +194,9 @@ class _InvitePageState extends State<InvitePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'Will you be my Valentine?',
+                          _invite?.inviteeName != null
+                              ? 'Will you be my Valentine, ${_invite!.inviteeName}?'
+                              : 'Will you be my Valentine?',
                           style: headlineStyle,
                           textAlign: TextAlign.center,
                         ),
@@ -205,10 +241,56 @@ class _InvitePageState extends State<InvitePage> {
                                             style: theme.textTheme.titleLarge,
                                             textAlign: TextAlign.center,
                                           ),
+                                          if (_invite!.letterBody != null) ...[
+                                            const SizedBox(height: 24),
+                                            Card(
+                                              color: const Color(0xFFFFF7FB),
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(16),
+                                                side: const BorderSide(color: Color(0xFFE9B7C8)),
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(20),
+                                                child: Column(
+                                                  children: [
+                                                    if (_invite!.letterTitle != null) ...[
+                                                      Text(
+                                                        _invite!.letterTitle!,
+                                                        style: theme.textTheme.titleMedium
+                                                            ?.copyWith(
+                                                              fontStyle: FontStyle.italic,
+                                                              color: const Color(0xFFB71C4A),
+                                                            ),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                      const SizedBox(height: 12),
+                                                    ],
+                                                    Text(
+                                                      _invite!.letterBody!,
+                                                      style: theme.textTheme.bodyLarge?.copyWith(
+                                                        height: 1.5,
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                           const SizedBox(height: 8),
                                           Text(
                                             InviteImages.byId(_invite!.imageId).title,
                                             style: theme.textTheme.bodyLarge,
+                                          ),
+                                          const SizedBox(height: 32),
+                                          Text(
+                                            '📸 Take a screenshot and share it with your next valentine!',
+                                            style: theme.textTheme.bodyMedium?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF7C2B5F),
+                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ],
                                       )
@@ -233,22 +315,37 @@ class _InvitePageState extends State<InvitePage> {
                                       },
                                       child: Stack(
                                         children: [
-                                          Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: ElevatedButton.icon(
-                                              onPressed: _accept,
-                                              icon: const Icon(Icons.favorite_rounded),
-                                              label: const Text('YES'),
+                                          AnimatedPositioned(
+                                            duration: const Duration(milliseconds: 300),
+                                            curve: Curves.easeOutCubic,
+                                            left: 0,
+                                            right: _accepted ? 0 : null,
+                                            bottom: 0,
+                                            child: SizedBox(
+                                              width: _accepted ? null : 120,
+                                              height: 48,
+                                              child: ElevatedButton.icon(
+                                                onPressed: _accept,
+                                                icon: const Icon(Icons.favorite_rounded),
+                                                label: Text(
+                                                  _accepted ? _getExcitementLevel() : 'YES',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: _accepted ? 18 : null,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                          PlayfulNoButton(
-                                            bounds: Size(
-                                              buttonConstraints.maxWidth,
-                                              buttonConstraints.maxHeight,
+                                          if (!_accepted)
+                                            PlayfulNoButton(
+                                              bounds: Size(
+                                                buttonConstraints.maxWidth,
+                                                buttonConstraints.maxHeight,
+                                              ),
+                                              controller: _noButtonController,
+                                              onMessageChanged: (_) {},
                                             ),
-                                            controller: _noButtonController,
-                                            onMessageChanged: (_) {},
-                                          ),
                                         ],
                                       ),
                                     );

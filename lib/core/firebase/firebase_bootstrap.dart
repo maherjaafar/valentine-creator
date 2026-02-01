@@ -8,10 +8,9 @@ import '../../domain/repositories/invite_repository.dart';
 import 'firebase_options.dart';
 
 class FirebaseBootstrapResult {
-  const FirebaseBootstrapResult({required this.repository, required this.isConfigured});
+  const FirebaseBootstrapResult({required this.repository});
 
   final InviteRepository repository;
-  final bool isConfigured;
 }
 
 class FirebaseBootstrap {
@@ -20,11 +19,10 @@ class FirebaseBootstrap {
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
       return FirebaseBootstrapResult(
         repository: FirestoreInviteRepository(FirebaseFirestore.instance),
-        isConfigured: true,
       );
     } catch (error) {
       debugPrint('Firebase init failed: $error');
-      return FirebaseBootstrapResult(repository: InMemoryInviteRepository(), isConfigured: false);
+      return FirebaseBootstrapResult(repository: InMemoryInviteRepository());
     }
   }
 }

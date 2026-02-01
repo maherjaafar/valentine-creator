@@ -5,10 +5,9 @@ import '../../domain/repositories/invite_repository.dart';
 import '../models/invite_model.dart';
 
 class FirestoreInviteRepository implements InviteRepository {
-  FirestoreInviteRepository(this._firestore)
-    : _collection = _firestore.collection('valentine_invites');
+  FirestoreInviteRepository(FirebaseFirestore firestore)
+    : _collection = firestore.collection('valentine_invites');
 
-  final FirebaseFirestore _firestore;
   final CollectionReference<Map<String, dynamic>> _collection;
 
   @override
